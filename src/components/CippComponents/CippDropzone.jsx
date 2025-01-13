@@ -1,37 +1,39 @@
-import React, { useCallback, useMemo, useState } from 'react'
-import PropTypes from 'prop-types'
-import { CippContentCard } from 'src/components/layout'
-import { useDropzone } from 'react-dropzone'
-import styled from 'styled-components'
-import { useMediaPredicate } from 'react-media-hook'
-import { useSelector } from 'react-redux'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import React, { useCallback, useMemo, useState } from "react";
+import PropTypes from "prop-types";
+//import { CippContentCard } from 'src/components/layout'
+import { useDropzone } from "react-dropzone";
+import { styled } from "@mui/material/styles";
+import { useMediaPredicate } from "react-media-hook";
+//import { useSelector } from "react-redux";
+//import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 const getColor = (props) => {
   if (props.isDragAccept) {
-    return '#00e676'
+    return "#00e676";
   }
   if (props.isDragReject) {
-    return '#ff1744'
+    return "#ff1744";
   }
   if (props.isFocused) {
-    return '#2196f3'
+    return "#2196f3";
   }
-  return '#eeeeee'
-}
+  return "#eeeeee";
+};
 
 const BackgroundColor = () => {
-  const currentTheme = useSelector((state) => state.app.currentTheme)
-  const preferredTheme = useMediaPredicate('(prefers-color-scheme: dark)') ? 'impact' : 'cyberdrain'
+  const currentTheme = useSelector((state) => state.app.currentTheme);
+  const preferredTheme = useMediaPredicate("(prefers-color-scheme: dark)")
+    ? "impact"
+    : "cyberdrain";
   const isDark =
-    currentTheme === 'impact' || (currentTheme === 'default' && preferredTheme === 'impact')
+    currentTheme === "impact" || (currentTheme === "default" && preferredTheme === "impact");
 
   if (isDark) {
-    return '#333'
+    return "#333";
   } else {
-    return '#fafafa'
+    return "#fafafa";
   }
-}
+};
 
 const Container = styled.div`
   flex: 1;
@@ -47,25 +49,44 @@ const Container = styled.div`
   color: #bdbdbd;
   outline: none;
   transition: border 0.24s ease-in-out;
-`
+`;
 
-const CippDropzone = ({ title, onDrop, dropMessage, accept, maxFiles = 1, ...props }) => {
+const CippDropzone = ({
+  title,
+  onDrop,
+  dropMessage,
+  accept,
+  maxFiles = 1,
+  returnCard = true,
+  ...props
+}) => {
   const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } = useDropzone({
     onDrop,
     accept: accept,
     maxFiles: maxFiles,
-  })
+  });
   return (
-    <CippContentCard title={title} {...props}>
-      <div className="container my-2">
-        <Container {...getRootProps({ isFocused, isDragAccept, isDragReject })}>
-          <input {...getInputProps()} />
-          <span>{dropMessage}</span>
-        </Container>
-      </div>
-    </CippContentCard>
-  )
-}
+    <>
+      {returnCard ? (
+        <CippContentCard title={title} {...props}>
+          <div className="container my-2">
+            <Container {...getRootProps({ isFocused, isDragAccept, isDragReject })}>
+              <input {...getInputProps()} />
+              <span>{dropMessage}</span>
+            </Container>
+          </div>
+        </CippContentCard>
+      ) : (
+        <div className="container my-2">
+          <Container {...getRootProps({ isFocused, isDragAccept, isDragReject })}>
+            <input {...getInputProps()} />
+            <span>{dropMessage}</span>
+          </Container>
+        </div>
+      )}
+    </>
+  );
+};
 
 CippDropzone.propTypes = {
   title: PropTypes.string,
@@ -73,6 +94,7 @@ CippDropzone.propTypes = {
   dropMessage: PropTypes.string,
   accept: PropTypes.object,
   maxFiles: PropTypes.number,
-}
+  returnCard: PropTypes.bool,
+};
 
-export default CippDropzone
+export default CippDropzone;
